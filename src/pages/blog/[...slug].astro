@@ -1,0 +1,33 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BlogPostPage from '../../components/pages/BlogPostPage.astro';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('blog');
+  const posts = allPosts.filter((post) => post.data.lang === 'tr');
+
+  return posts.map((post) => {
+    const translation = allPosts.find(
+      (candidate) => candidate.data.lang === 'en' && candidate.data.translationKey === post.data.translationKey,
+    );
+    const translatedSlug = translation?.id.replace(/^en\//, '');
+
+    return {
+      params: { slug: post.id.replace(/^tr\//, '') },
+      props: {
+        post,
+        alternatePath: translatedSlug ? `/en/blog/${translatedSlug}/` : '/en/blog',
+      },
+    };
+  });
+}
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  alternatePath: string;
+}
+
+const { post, alternatePath } = Astro.props;
+---
+
+<BlogPostPage lang="tr" post={post} alternatePath={alternatePath} />

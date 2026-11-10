@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { routes, ui, type Lang } from '../../i18n/config';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const copy = ui[lang].blog;
+const posts = (await getCollection('blog'))
+  .filter((post) => post.data.lang === lang)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const dateFormatter = new Intl.DateTimeFormat(ui[lang].locale, {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+
+const slugFor = (id: string) => id.startsWith(`${lang}/`) ? id.slice(lang.length + 1) : id;
+---
+
+<BaseLayout lang={lang} routeKey="blog" title={copy.title} description={copy.description}>
+  <section aria-labelledby="blog-title">
+    <header class="grid gap-6 border-b border-[#171713] pb-10 sm:grid-cols-[1fr_1.2fr] sm:items-end">
+      <div>
+        <p class="font-mono text-[10px] font-bold tracking-[0.18em] text-[#f4511e] uppercase">{copy.eyebrow}</p>
+        <h1 id="blog-title" class="mt-3 text-5xl leading-none font-black tracking-[-0.06em] text-[#171713] sm:text-7xl">{copy.heading}</h1>
+      </div>
+      <p class="max-w-xl text-lg leading-8 text-[#65645d]">{copy.intro}</p>
+    </header>
+
+    {posts.length > 0 ? (
+      <div class="mt-12 border-t border-[#171713]">
+        {posts.map((post, index) => {
+          const href = `${routes[lang].blog}/${slugFor(post.id)}/`;
+          return (
+            <article class="group grid gap-5 border-b border-[#171713] py-8 sm:grid-cols-[3rem_1fr]">
+              <span class="font-mono text-xs font-bold text-[#f4511e]">0{index + 1}</span>
+              <div>
+                <time datetime={post.data.pubDate.toISOString()} class="font-mono text-[10px] font-bold tracking-wider text-[#65645d] uppercase">{dateFormatter.format(post.data.pubDate)}</time>
+                <h2 class="mt-3 text-2xl font-bold tracking-[-0.04em] text-[#171713] sm:text-3xl"><a href={href} class="transition-colors group-hover:text-[#f4511e]">{post.data.title}</a></h2>
+                <p class="mt-3 max-w-2xl leading-7 text-[#65645d]">{post.data.description}</p>
+                {post.data.tags.length > 0 && <ul class="mt-5 flex flex-wrap gap-2" aria-label={`${post.data.title} tags`}>
+                  {post.data.tags.map((tag) => <li class="border border-[#cfcbc0] px-2 py-1 font-mono text-[10px] font-bold text-[#65645d] uppercase">{tag}</li>)}
+                </ul>}
+                <a href={href} class="mt-6 inline-block font-mono text-xs font-bold text-[#171713] underline decoration-[#f4511e] decoration-2 underline-offset-4">{copy.read}</a>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    ) : <p class="mt-10 border border-[#171713] p-6 text-[#65645d]">{copy.empty}</p>}
+  </section>
+</BaseLayout>

@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { ui, type Lang } from '../../i18n/config';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const copy = ui[lang].contact;
+
+const socialLinks = [
+  { label: 'GitHub', href: 'https://github.com/' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/' },
+  { label: 'X', href: 'https://x.com/' },
+];
+---
+
+<BaseLayout lang={lang} routeKey="contact" title={copy.title} description={copy.description}>
+  <section aria-labelledby="contact-title">
+    <header class="border-b border-[#171713] pb-10">
+      <p class="font-mono text-[10px] font-bold tracking-[0.18em] text-[#f4511e] uppercase">{copy.eyebrow}</p>
+      <h1 id="contact-title" class="mt-3 max-w-4xl text-5xl leading-none font-black tracking-[-0.06em] text-[#171713] sm:text-7xl">{copy.heading}</h1>
+      <p class="mt-5 max-w-2xl text-lg leading-8 text-[#65645d]">{copy.intro}</p>
+    </header>
+
+    <div class="mt-12 grid gap-12 lg:grid-cols-[0.7fr_1.3fr]">
+      <aside aria-label={copy.socialLabel}>
+        <dl class="space-y-7 border-l border-[#171713] pl-5">
+          <div>
+            <dt class="font-mono text-[10px] font-bold tracking-widest text-[#f4511e] uppercase">{copy.emailLabel}</dt>
+            <dd class="mt-1"><a href="mailto:merhaba@example.com" class="font-bold text-[#171713] underline decoration-[#f4511e] underline-offset-4">merhaba@example.com</a></dd>
+          </div>
+          <div>
+            <dt class="font-mono text-[10px] font-bold tracking-widest text-[#f4511e] uppercase">{copy.locationLabel}</dt>
+            <dd class="mt-1 font-bold text-[#171713]">{copy.location}</dd>
+          </div>
+          <div>
+            <dt class="font-mono text-[10px] font-bold tracking-widest text-[#f4511e] uppercase">{copy.socialLabel}</dt>
+            <dd class="mt-2"><ul class="flex flex-wrap gap-4" role="list">
+              {socialLinks.map((link) => <li><a href={link.href} target="_blank" rel="noopener noreferrer" class="font-mono text-xs font-bold text-[#171713] underline decoration-[#f4511e] underline-offset-4">{link.label}</a></li>)}
+            </ul></dd>
+          </div>
+        </dl>
+      </aside>
+
+      <form action="https://formspree.io/f/xbgrqdvp" method="POST" class="space-y-6 border border-[#171713] bg-[#fffdf7] p-6 shadow-[8px_8px_0_#171713] sm:p-8">
+        <input type="hidden" name="language" value={lang} />
+        <div>
+          <label for={`${lang}-full-name`} class="block font-mono text-xs font-bold tracking-wide text-[#171713] uppercase">{copy.fullName}</label>
+          <input id={`${lang}-full-name`} name="name" type="text" autocomplete="name" required class="mt-2 block w-full border-0 border-b border-[#171713] bg-transparent px-0 py-3 text-[#171713] outline-none transition focus:border-[#f4511e]" />
+        </div>
+        <div>
+          <label for={`${lang}-company`} class="block font-mono text-xs font-bold tracking-wide text-[#171713] uppercase">{copy.company} <span class="text-[#65645d] normal-case">{copy.optional}</span></label>
+          <input id={`${lang}-company`} name="company" type="text" autocomplete="organization" class="mt-2 block w-full border-0 border-b border-[#171713] bg-transparent px-0 py-3 text-[#171713] outline-none transition focus:border-[#f4511e]" />
+        </div>
+        <div>
+          <label for={`${lang}-email`} class="block font-mono text-xs font-bold tracking-wide text-[#171713] uppercase">{copy.email}</label>
+          <input id={`${lang}-email`} name="email" type="email" autocomplete="email" required class="mt-2 block w-full border-0 border-b border-[#171713] bg-transparent px-0 py-3 text-[#171713] outline-none transition focus:border-[#f4511e]" />
+        </div>
+        <div>
+          <label for={`${lang}-project-type`} class="block font-mono text-xs font-bold tracking-wide text-[#171713] uppercase">{copy.projectType}</label>
+          <select id={`${lang}-project-type`} name="projectType" required class="mt-2 block w-full border-0 border-b border-[#171713] bg-transparent px-0 py-3 text-[#171713] outline-none transition focus:border-[#f4511e]">
+            <option value="">{copy.select}</option>
+            {copy.projectOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+          </select>
+        </div>
+        <div>
+          <label for={`${lang}-message`} class="block font-mono text-xs font-bold tracking-wide text-[#171713] uppercase">{copy.details}</label>
+          <textarea id={`${lang}-message`} name="message" rows="6" required class="mt-2 block w-full resize-y border border-[#cfcbc0] bg-[#f3f0e8] px-3 py-3 text-[#171713] outline-none transition focus:border-[#f4511e]"></textarea>
+        </div>
+        <button type="submit" class="bg-[#171713] px-6 py-3 font-mono text-xs font-bold tracking-wider text-[#f3f0e8] uppercase transition-transform hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#171713]">{copy.submit}</button>
+      </form>
+    </div>
+  </section>
+</BaseLayout>

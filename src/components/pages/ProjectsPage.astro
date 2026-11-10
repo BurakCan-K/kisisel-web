@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { routes, ui, type Lang } from '../../i18n/config';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const copy = ui[lang].projects;
+---
+
+<BaseLayout lang={lang} routeKey="projects" title={copy.title} description={copy.description}>
+  <section aria-labelledby="projects-title">
+    <header class="grid gap-6 border-b border-[#171713] pb-10 sm:grid-cols-[1fr_1.2fr] sm:items-end">
+      <div>
+        <p class="font-mono text-[10px] font-bold tracking-[0.18em] text-[#f4511e] uppercase">{copy.eyebrow}</p>
+        <h1 id="projects-title" class="mt-3 text-5xl leading-none font-black tracking-[-0.06em] text-[#171713] sm:text-7xl">{copy.heading}</h1>
+      </div>
+      <p class="max-w-xl text-lg leading-8 text-[#65645d]">{copy.intro}</p>
+    </header>
+
+    <div class="mt-12 grid gap-px border border-[#171713] bg-[#171713] sm:grid-cols-2">
+      {copy.projects.map((project) => (
+        <article class="group flex min-h-80 flex-col bg-[#f3f0e8] p-6 transition-colors hover:bg-[#fffdf7] sm:p-8">
+          <div class="mb-8 flex items-center justify-between gap-4 font-mono text-[10px] font-bold tracking-widest uppercase">
+            <span class="text-[#f4511e]">{project.type}</span>
+            <span class="border border-[#cfcbc0] px-2 py-1 text-[#65645d]">{project.status}</span>
+          </div>
+          <h2 class="text-2xl font-bold tracking-[-0.04em] text-[#171713]">{project.title}</h2>
+          <p class="mt-3 flex-grow leading-7 text-[#65645d]">{project.description}</p>
+          <ul class="mt-6 flex flex-wrap gap-2" aria-label={`${project.title} technologies`}>
+            {project.technologies.map((technology) => (
+              <li class="border border-[#cfcbc0] px-2.5 py-1 font-mono text-[10px] font-bold text-[#65645d] uppercase">{technology}</li>
+            ))}
+          </ul>
+          <div class="mt-7 font-mono text-xs font-bold">
+            {project.liveURL ? (
+              <a href={project.liveURL} target="_blank" rel="noopener noreferrer" class="text-[#171713] underline decoration-[#f4511e] decoration-2 underline-offset-4">{copy.openLive}</a>
+            ) : <span class="text-[#65645d]">{copy.liveSoon}</span>}
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <div class="mt-16 bg-[#f4511e] p-7 text-white sm:p-10">
+      <p class="font-mono text-[10px] font-bold tracking-[0.18em] uppercase">{copy.ctaEyebrow}</p>
+      <h2 class="mt-5 max-w-2xl text-3xl font-black tracking-[-0.045em] sm:text-4xl">{copy.ctaTitle}</h2>
+      <a href={routes[lang].contact} class="mt-7 inline-block bg-[#171713] px-5 py-3 font-mono text-xs font-bold tracking-wider text-[#f3f0e8] uppercase">{copy.ctaButton}</a>
+    </div>
+  </section>
+</BaseLayout>

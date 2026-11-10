@@ -1,0 +1,145 @@
+---
+import '../styles/global.css';
+import { otherLang, routes, ui, type Lang, type RouteKey } from '../i18n/config';
+
+interface Props {
+  lang?: Lang;
+  routeKey?: RouteKey;
+  title?: string;
+  description?: string;
+  image?: string;
+  canonicalURL?: string;
+  alternatePath?: string;
+}
+
+const {
+  lang = 'tr',
+  routeKey = 'home',
+  title,
+  description,
+  image,
+  canonicalURL,
+  alternatePath,
+} = Astro.props;
+
+const copy = ui[lang];
+const pageTitle = title ?? copy.layout.defaultTitle;
+const pageDescription = description ?? copy.layout.defaultDescription;
+const pageImage = image ?? (lang === 'tr' ? '/og-image.png' : '/og-image-en.png');
+const alternateLang = otherLang(lang);
+const languagePath = alternatePath ?? routes[alternateLang][routeKey];
+const currentYear = new Date().getFullYear();
+
+const navigation: Array<{ key: RouteKey; label: string; href: string }> = (
+  ['home', 'projects', 'services', 'blog', 'contact'] as RouteKey[]
+).map((key) => ({ key, label: copy.layout.nav[key], href: routes[lang][key] }));
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    {canonicalURL && <link rel="canonical" href={canonicalURL} />}
+    <link rel="alternate" hreflang={lang} href={Astro.url.pathname} />
+    <link rel="alternate" hreflang={alternateLang} href={languagePath} />
+    <link rel="alternate" hreflang="x-default" href={lang === 'tr' ? Astro.url.pathname : languagePath} />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:image" content={pageImage} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content={lang === 'tr' ? 'tr_TR' : 'en_US'} />
+  </head>
+
+  <body class="min-h-screen antialiased">
+    <div class="flex min-h-screen flex-col">
+      <header class="border-b border-[#171713] bg-[#f3f0e8]/95 backdrop-blur">
+        <nav
+          class="mx-auto flex max-w-5xl flex-col gap-5 px-5 py-5 sm:flex-row sm:items-center sm:justify-between lg:px-8"
+          aria-label={copy.layout.mainNavigation}
+        >
+          <a
+            href={routes[lang].home}
+            class="group inline-flex w-fit items-center gap-3 font-mono text-sm font-bold tracking-[-0.04em] text-[#171713] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#171713]"
+          >
+            <span class="flex size-7 items-center justify-center bg-[#171713] text-[10px] text-[#f3f0e8] transition-transform group-hover:-rotate-6">BCK</span>
+            BURAK CAN <span class="text-[#f4511e]">KAHRAMAN</span>
+          </a>
+
+          <div class="flex flex-wrap items-center gap-3">
+          <ul class="flex flex-wrap items-center gap-x-1 gap-y-2 font-mono text-[11px] font-bold tracking-wider uppercase" role="list">
+            {
+              navigation.map(({ label, href }, index) => (
+                <li>
+                  <a
+                    href={href}
+                    class="inline-flex gap-1.5 px-2 py-1.5 text-[#65645d] transition-colors hover:bg-[#171713] hover:text-[#f3f0e8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#171713]"
+                  >
+                    <span class="text-[#f4511e]">0{index + 1}</span>
+                    {label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+          <a
+            href={languagePath}
+            lang={alternateLang}
+            hreflang={alternateLang}
+            aria-label={`${copy.layout.languageSwitcher}: ${alternateLang === 'tr' ? 'Türkçe' : 'English'}`}
+            class="border border-[#171713] px-2.5 py-1.5 font-mono text-[11px] font-bold tracking-wider text-[#171713] uppercase transition-colors hover:bg-[#f4511e] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#171713]"
+          >
+            {alternateLang.toUpperCase()}
+          </a>
+          </div>
+        </nav>
+      </header>
+
+      <main class="mx-auto w-full max-w-5xl flex-grow px-5 py-12 lg:px-8 lg:py-16">
+        <slot />
+      </main>
+
+      <footer class="border-t border-[#171713] bg-[#171713] text-[#f3f0e8]">
+        <div
+          class="mx-auto grid max-w-5xl gap-8 px-5 py-9 sm:grid-cols-[1fr_auto] sm:items-end lg:px-8"
+        >
+          <div>
+            <p class="font-mono text-[11px] tracking-widest text-[#aaa79d] uppercase">{copy.layout.availabilityLabel}</p>
+            <p class="mt-2 flex items-center gap-2 text-sm font-bold">
+              <span class="size-2 rounded-full bg-[#f4511e]"></span>
+              {copy.layout.availability}
+            </p>
+            <p class="mt-6 font-mono text-[11px] text-[#aaa79d]">&copy; {currentYear} BURAK CAN KAHRAMAN — {copy.layout.location}</p>
+          </div>
+
+          <nav aria-label={copy.layout.socialNavigation}>
+            <ul class="flex items-center gap-5 font-mono text-xs font-bold uppercase" role="list">
+              <li>
+                <a
+                  href="https://github.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="transition-colors hover:text-[#f4511e] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f3f0e8]"
+                >GitHub</a>
+              </li>
+              <li>
+                <a
+                  href="https://www.linkedin.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="transition-colors hover:text-[#f4511e] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f3f0e8]"
+                >LinkedIn</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

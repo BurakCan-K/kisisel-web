@@ -1,0 +1,37 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { routes, ui, type Lang } from '../../i18n/config';
+
+interface Props {
+  lang: Lang;
+  post: CollectionEntry<'blog'>;
+  alternatePath?: string;
+}
+
+const { lang, post, alternatePath } = Astro.props;
+const copy = ui[lang].blog;
+const { Content } = await render(post);
+const formattedDate = new Intl.DateTimeFormat(ui[lang].locale, {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+}).format(post.data.pubDate);
+---
+
+<BaseLayout lang={lang} routeKey="blog" alternatePath={alternatePath} title={`${post.data.title} | Blog`} description={post.data.description}>
+  <article>
+    <a href={routes[lang].blog} class="inline-flex font-mono text-xs font-bold tracking-wide text-[#65645d] uppercase transition-colors hover:text-[#f4511e]">{copy.back}</a>
+    <header class="mt-10 border-b border-[#171713] pb-10">
+      <time datetime={post.data.pubDate.toISOString()} class="font-mono text-[10px] font-bold tracking-[0.18em] text-[#f4511e] uppercase">{formattedDate}</time>
+      <h1 class="mt-4 max-w-4xl text-4xl leading-[0.95] font-black tracking-[-0.055em] text-[#171713] sm:text-6xl">{post.data.title}</h1>
+      <p class="mt-6 max-w-2xl text-lg leading-8 text-[#65645d]">{post.data.description}</p>
+      {post.data.tags.length > 0 && <ul class="mt-6 flex flex-wrap gap-2" aria-label="Article tags">
+        {post.data.tags.map((tag) => <li class="border border-[#cfcbc0] px-2.5 py-1 font-mono text-[10px] font-bold text-[#65645d] uppercase">{tag}</li>)}
+      </ul>}
+    </header>
+    <div class="mt-10 max-w-3xl text-[1.05rem] leading-8 text-[#45443f] [&_a]:font-bold [&_a]:text-[#171713] [&_a]:underline [&_a]:decoration-[#f4511e] [&_a]:decoration-2 [&_a]:underline-offset-4 [&_blockquote]:my-7 [&_blockquote]:border-l-4 [&_blockquote]:border-[#f4511e] [&_blockquote]:pl-5 [&_blockquote]:italic [&_code]:bg-[#ded9cc] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-sm [&_h2]:mt-12 [&_h2]:mb-4 [&_h2]:text-3xl [&_h2]:font-black [&_h2]:tracking-[-0.04em] [&_h2]:text-[#171713] [&_h3]:mt-9 [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-[#171713] [&_li]:my-2 [&_ol]:my-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:my-5 [&_pre]:my-7 [&_pre]:overflow-x-auto [&_pre]:bg-[#171713] [&_pre]:p-5 [&_pre]:font-mono [&_pre]:text-sm [&_pre]:text-[#f3f0e8] [&_strong]:font-bold [&_strong]:text-[#171713] [&_ul]:my-6 [&_ul]:list-disc [&_ul]:pl-6">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>
