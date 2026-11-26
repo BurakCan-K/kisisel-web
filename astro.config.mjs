@@ -5,6 +5,9 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
+  redirects: {
+    '/': { destination: '/kart', status: 307 },
+  },
   i18n: {
     defaultLocale: 'tr',
     locales: ['tr', 'en'],

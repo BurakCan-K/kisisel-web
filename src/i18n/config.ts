@@ -5,7 +5,7 @@ export const defaultLang: Lang = 'tr';
 
 export const routes: Record<Lang, Record<RouteKey, string>> = {
   tr: {
-    home: '/',
+    home: '/ana-sayfa',
     projects: '/projeler',
     services: '/hizmetler',
     blog: '/blog',

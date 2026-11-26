@@ -1,5 +1,6 @@
 ---
 import CardLayout from '../layouts/CardLayout.astro';
+import { routes } from '../i18n/config';
 
 const pageTitle = 'Burak Can Kahraman | Dijital İletişim Kartı';
 const pageDescription =
@@ -22,7 +23,7 @@ const contactLinks = [
   {
     label: 'Web Sitemi Ziyaret Et',
     ariaLabel: "Burak Can Kahraman'ın web sitesini aç",
-    href: 'https://burakcankahraman-web.vercel.app/',
+    href: routes.tr.home,
     icon: 'website',
   },
 ] as const;
@@ -38,7 +39,7 @@ const currentYear = new Date().getFullYear();
     >
       <header class="border-b border-[#171713] px-5 py-6 sm:px-8 sm:py-8">
         <a
-          href="/"
+          href={routes.tr.home}
           aria-label="Burak Can Kahraman ana sayfasına git"
           class="group inline-flex items-center gap-3 font-mono text-sm font-bold tracking-[-0.04em] text-[#171713] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f4511e]"
         >
